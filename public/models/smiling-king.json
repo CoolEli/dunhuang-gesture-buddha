@@ -1,0 +1,17 @@
+{
+  "model": "smiling-king.glb",
+  "metadata": {
+    "version": "2.0",
+    "generator": "By https://any3d.cc",
+    "extensions": ["EXT_meshopt_compression", "EXT_texture_webp", "KHR_mesh_quantization"],
+    "xmp": null
+  },
+  "scenes": [{"id": 0, "name": "AuxScene", "rootName": "convert", "bboxMin": [-0.29867, 0.00008, -0.26922], "bboxMax": [0.32244, 1.04259, 0.15218], "renderVertexCount": 74994, "uploadVertexCount": 22231, "uploadNaiveVertexCount": 22231}],
+  "meshes": [{"id": 0, "name": null, "mode": "TRIANGLES", "meshPrimitives": 1, "glPrimitives": 24998, "vertices": 22231, "indices": "u16", "attributes": ["NORMAL:i8_norm", "POSITION:i16_norm", "TEXCOORD_0:u16_norm"], "instances": 1, "size": "438.99 KB"}],
+  "materials": [{"id": 0, "name": "Material.001", "instances": 1, "textures": ["baseColorTexture", "normalTexture", "metallicRoughnessTexture"], "alphaMode": "OPAQUE", "doubleSided": true}],
+  "textures": [
+    {"id": 0, "name": null, "uri": null, "slots": ["metallicRoughnessTexture"], "instances": 1, "mimeType": "image/webp", "compression": null, "resolution": null, "size": "975.04 KB", "gpuSize": null},
+    {"id": 1, "name": null, "uri": null, "slots": ["baseColorTexture"], "instances": 1, "mimeType": "image/webp", "compression": null, "resolution": null, "size": "1.91 MB", "gpuSize": null},
+    {"id": 2, "name": null, "uri": null, "slots": ["normalTexture"], "instances": 1, "mimeType": null, "compression": null, "resolution": null, "size": null, "gpuSize": null}
+  ]
+}
