@@ -1,0 +1,44 @@
+{
+  "model": "beida-buddha.glb",
+  "metadata": {
+    "version": "2.0",
+    "generator": "By https://any3d.cc",
+    "extensions": ["EXT_meshopt_compression", "EXT_texture_webp", "KHR_mesh_quantization"],
+    "xmp": null
+  },
+  "scenes": [{
+    "id": 0,
+    "name": "AuxScene",
+    "rootName": "convert",
+    "bboxMin": [-0.37311, 0, -0.27819],
+    "bboxMax": [0.38552, 0.91907, 0.2531],
+    "renderVertexCount": 75000,
+    "uploadVertexCount": 22565,
+    "uploadNaiveVertexCount": 22565
+  }],
+  "meshes": [{
+    "id": 0,
+    "name": null,
+    "mode": "TRIANGLES",
+    "meshPrimitives": 1,
+    "glPrimitives": 25000,
+    "vertices": 22565,
+    "indices": "u16",
+    "attributes": ["NORMAL:i8_norm", "POSITION:i16_norm", "TEXCOORD_0:u16_norm"],
+    "instances": 1,
+    "size": "443.35 KB"
+  }],
+  "materials": [{
+    "id": 0,
+    "name": "Material.001",
+    "instances": 1,
+    "textures": ["baseColorTexture", "normalTexture", "metallicRoughnessTexture"],
+    "alphaMode": "OPAQUE",
+    "doubleSided": true
+  }],
+  "textures": [
+    {"id": 0, "name": null, "uri": null, "slots": ["metallicRoughnessTexture"], "instances": 1, "mimeType": "image/webp", "compression": null, "resolution": null, "size": "956.62 KB", "gpuSize": null},
+    {"id": 1, "name": null, "uri": null, "slots": ["baseColorTexture"], "instances": 1, "mimeType": "image/webp", "compression": null, "resolution": null, "size": "1.73 MB", "gpuSize": null},
+    {"id": 2, "name": null, "uri": null, "slots": ["normalTexture"], "instances": 1, "mimeType": null, "compression": null, "resolution": null, "size": null, "gpuSize": null}
+  ]
+}
