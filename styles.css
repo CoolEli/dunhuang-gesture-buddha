@@ -1,0 +1,572 @@
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html, body { width:100%; height:100%; overflow:hidden; background:#000;
+    color:#ffffff;
+    font-family: 'Doto', 'PingFang SC', 'Microsoft YaHei', 'Hiragino Sans GB', sans-serif;
+    user-select:none; }
+  .en { font-family: 'Doto', 'Courier New', monospace; font-weight: 700;
+    letter-spacing: .12em; line-height: 1.1; }
+  .zh { font-family: 'PingFang SC', 'Microsoft YaHei', 'Hiragino Sans GB', 'Noto Sans SC', sans-serif;
+    letter-spacing: .35em; line-height: 1.5; font-weight: 400; }
+  html[data-lang="en"] .zh { display: none !important; }
+  html[data-lang="zh"] .en { display: none !important; }
+
+  #bg-layer { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+  #nameBlock {
+    position: absolute; left: 40px; top: 14%;
+    width: calc(100vw - 420px); max-width: 680px; text-align: left;
+    overflow-wrap: break-word; word-break: break-word;
+  }
+  #buddhaName .en {
+    font-family: 'Doto', 'Courier New', monospace; font-weight: 700;
+    font-size: clamp(3rem, 7.5vw, 8rem); letter-spacing: .04em;
+    line-height: 1.05; color: #ffffff;
+    overflow-wrap: break-word; word-break: break-word; max-width: 100%;
+  }
+  #buddhaName .zh {
+    font-family: 'PingFang SC', 'Microsoft YaHei', 'Hiragino Sans GB', sans-serif;
+    font-weight: 900; font-size: clamp(3rem, 7vw, 8rem);
+    letter-spacing: .18em; line-height: 1.2; color: #ffffff;
+    opacity: .98; margin-top: 20px;
+    text-shadow: 0 0 24px rgba(255,255,255,.15);
+    overflow-wrap: break-word; word-break: break-word; max-width: 100%;
+  }
+  #narrative { margin-top: 26px; max-width: min(460px, 72vw); }   /* ★ 至多四五行，不碰模型 */
+  /* ★ 阶段三左侧：只显示赐福句，其余全部隐藏 */
+  #blessLine { display: none; }
+  body.phase3 #touchHint,
+  body.phase3 #buddhaName,
+  body.phase3 #narrative { display: none !important; }
+  body.phase3 #blessLine { display: block; }
+  #blessLine .en {
+    font-family: 'Doto', 'Courier New', monospace; font-weight: 700;
+    font-size: clamp(3rem, 7.5vw, 8rem);   /* ★ 与模型名字号一致 */
+    line-height: 1.4; letter-spacing: .06em; color: #fff;
+    overflow-wrap: break-word; word-break: break-word;
+  }
+  #blessLine .zh {
+    font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif; font-weight: 900;
+    font-size: clamp(3rem, 7vw, 8rem);   /* ★ 与模型名字号一致 */
+    line-height: 1.55; letter-spacing: .2em; color: #fff;
+    overflow-wrap: break-word; word-break: break-word;
+  }
+
+  /* ★ 祝福卡片：半透明＋背景模糊，约两倍大，金色双框设计 */
+  #blessCard {
+    position: fixed; left: 50%; top: 50%;
+    transform: translate(-50%, -50%) scale(.96);
+    width: min(1100px, 88vw); max-height: 82vh; overflow-y: auto;
+    z-index: 60; padding: 64px 72px; text-align: center;
+    background: rgba(10, 10, 14, 0.5);
+    backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+    border: 1px solid rgba(255, 233, 184, 0.28); border-radius: 12px;
+    box-shadow: 0 24px 100px rgba(0, 0, 0, 0.55),
+      inset 0 0 80px rgba(255, 200, 100, 0.05);
+    opacity: 0; visibility: hidden; pointer-events: none;
+    transition: opacity .6s ease, transform .6s ease, visibility .6s;
+    scrollbar-width: none;
+  }
+  #blessCard::-webkit-scrollbar { display: none; }
+  #blessCard.show {
+    opacity: 1; visibility: visible; pointer-events: auto;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  #blessCard::before {   /* 内框线：双框 */
+    content: ''; position: absolute; inset: 14px;
+    border: 1px solid rgba(255, 233, 184, 0.16); border-radius: 8px;
+    pointer-events: none;
+  }
+  #blessCard .bless-kicker { margin-bottom: 30px; }
+  #blessCard .bless-kicker .en {
+    font-family: 'Doto', 'Courier New', monospace; font-weight: 700;
+    font-size: .75rem; letter-spacing: .5em; text-indent: .5em;
+    color: rgba(255, 233, 184, 0.65);
+  }
+  #blessCard .bless-kicker .zh {
+    font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    font-size: .8rem; letter-spacing: .6em; text-indent: .6em;
+    color: rgba(255, 233, 184, 0.65);
+  }
+  #blessCard .bless-text .zh {
+    font-family: 'Songti SC', 'STSong', 'Noto Serif SC', serif;
+    font-size: clamp(1.7rem, 3vw, 2.6rem);
+    letter-spacing: .24em; text-indent: .24em;
+    color: #ffe9b8; line-height: 1.9;
+    text-shadow: 0 0 32px rgba(255, 200, 100, 0.25);
+  }
+  #blessCard .bless-text .en {   /* ★ 古英文翻译：英文模式下代替文言文，无任何中文 */
+    font-family: Georgia, 'Times New Roman', serif; font-style: italic;
+    font-size: clamp(1.35rem, 2.3vw, 2rem);
+    letter-spacing: .05em; line-height: 1.75;
+    color: #ffe9b8; max-width: 22em; margin: 0 auto;
+    text-shadow: 0 0 32px rgba(255, 200, 100, 0.25);
+  }
+  #blessCard .bless-divider {
+    display: flex; align-items: center; justify-content: center; gap: 16px;
+    margin: 30px auto; color: rgba(255, 233, 184, 0.55); font-size: .8rem;
+  }
+  #blessCard .bless-divider::before,
+  #blessCard .bless-divider::after {
+    content: ''; width: 130px; height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255, 233, 184, 0.45));
+  }
+  #blessCard .bless-divider::after {
+    background: linear-gradient(90deg, rgba(255, 233, 184, 0.45), transparent);
+  }
+  #blessCard .bless-note .en {
+    font-family: 'Doto', 'Courier New', monospace; font-weight: 700;
+    font-size: .92rem; line-height: 1.9; letter-spacing: .06em;
+    color: rgba(255, 255, 255, 0.8);
+  }
+  #blessCard .bless-note .zh {
+    font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    font-size: 1rem; line-height: 2; letter-spacing: .12em;
+    color: rgba(255, 255, 255, 0.8);
+  }
+  #blessCard .bless-tip { margin-top: 38px; opacity: .5; }
+  #blessCard .bless-tip .en {
+    font-family: 'Doto', 'Courier New', monospace; font-weight: 700;
+    font-size: .72rem; letter-spacing: .3em; color: #fff;
+  }
+  #blessCard .bless-tip .zh {
+    font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    font-size: .78rem; letter-spacing: .4em; color: #fff;
+  }
+  /* ★ 模型名上方叙事句：常驻，不拦截指针 */
+  #touchHint {
+    margin-bottom: 20px;    max-width: min(430px, 72vw);
+    opacity: .92;
+    pointer-events: none;
+  }
+  #touchHint .en {
+    font-family: 'Doto', 'Courier New', monospace; font-weight: 700;
+    font-size: clamp(.9rem, 1.6vw, 1.7rem);
+    line-height: 1.5; letter-spacing: .06em; color: #fff;
+    overflow-wrap: break-word; word-break: break-word;
+  }
+  #touchHint .zh {
+    font-family: 'Doto', 'PingFang SC', 'Microsoft YaHei', sans-serif; font-weight: 900;
+    font-size: clamp(.9rem, 1.5vw, 1.6rem);
+    line-height: 1.6; letter-spacing: .14em; color: #fff;
+    overflow-wrap: break-word; word-break: break-word;
+  }
+  #narrative .en {
+    font-family: 'Doto', 'Courier New', monospace; font-weight: 700;
+    font-size: clamp(1.05rem, 2.6vw, 2.8rem);   /* ★ 模型名称的 35%，不再顶掉模型名 */
+    line-height: 1.4; letter-spacing: .06em;
+    color: #ffffff; opacity: .9;
+    overflow-wrap: break-word; word-break: break-word;
+  }
+  #narrative .zh {
+    font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif; font-weight: 900;
+    font-size: clamp(1.05rem, 2.45vw, 2.8rem);   /* ★ 模型名称的 35%，不再顶掉模型名 */
+    line-height: 1.55; letter-spacing: .2em;
+    color: #ffffff; opacity: .9;
+    overflow-wrap: break-word; word-break: break-word;
+  }
+  /* ★ 阶段一模型微调滑轨：左下角固定 */
+  #modelTweaks {
+    position: fixed; left: 40px; bottom: 32px; z-index: 10; pointer-events: auto;
+    width: 300px; max-width: calc(100vw - 80px);
+    display: none; flex-direction: column; gap: 14px;
+    background: rgba(10,10,14,.55); border: none;
+    border-radius: 2px; padding: 14px 14px 12px;
+    backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+  }
+  #modelTweaks.show { display: flex; }
+  #modelTweaks .mt-row { display: flex; align-items: center; gap: 10px; }
+  #modelTweaks .mt-label {
+    font-size: 12px; letter-spacing: .18em; color: #fff; font-weight: 700;
+    white-space: nowrap; min-width: 4.5em;
+    font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  }
+  #modelTweaks .mt-label .en { font-family: 'Doto', 'Courier New', monospace; letter-spacing: .12em; font-weight: 700; }
+  #modelTweaks .mt-val {
+    font-family: 'Doto', 'Courier New', monospace; font-size: 12px; font-weight: 700;
+    color: #fff; min-width: 40px; text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+  #modelTweaks input[type="range"] {
+    -webkit-appearance: none; appearance: none;
+    flex: 1; min-width: 0; height: 20px; background: transparent; cursor: pointer;
+  }
+  /* ★ 像素化轨道：点阵 */
+  #modelTweaks input[type="range"]::-webkit-slider-runnable-track {
+    height: 6px;
+    background: repeating-linear-gradient(90deg, rgba(232,168,62,.95) 0 3px, transparent 3px 7px);
+  }
+  /* ★ 粒子化方形滑块：像素方块＋火花微粒 */
+  #modelTweaks input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none; appearance: none;
+    width: 12px; height: 12px; margin-top: -3px; border-radius: 0;
+    background: #ffd98a; border: 2px solid #0a0a0e;
+    box-shadow:
+      0 0 0 1px rgba(232,168,62,.9),
+      4px -5px 0 -1px rgba(255,217,138,.75),
+      -5px 4px 0 -1px rgba(255,217,138,.5),
+      6px 3px 0 -2px rgba(255,217,138,.4),
+      -3px -6px 0 -2px rgba(255,217,138,.35);
+    image-rendering: pixelated;
+  }
+  #modelTweaks input[type="range"]::-moz-range-track {
+    height: 6px;
+    background: repeating-linear-gradient(90deg, rgba(232,168,62,.95) 0 3px, transparent 3px 7px);
+  }
+  #modelTweaks input[type="range"]::-moz-range-thumb {
+    width: 8px; height: 8px; border-radius: 0;
+    background: #ffd98a; border: 2px solid #0a0a0e;
+    box-shadow: 0 0 0 1px rgba(232,168,62,.9), 0 0 10px rgba(255,217,138,.7);
+  }
+  #narrative .cursor {
+    display: inline-block; width: .55em; margin-left: .05em;
+    animation: blink 1s steps(2, end) infinite;
+    color: #ffffff; font-weight: 400;
+  }
+  @keyframes blink { 0%, 50% { opacity: 1; } 50.01%, 100% { opacity: 0; } }
+
+  #app { position: fixed; inset: 0; cursor: crosshair; z-index: 1; background: transparent !important; }
+  #app canvas { display: block; background: transparent !important; }
+
+  #infoPanel {
+    position: fixed; right: 24px; top: 50%; transform: translateY(-50%);
+    z-index: 6; width: 384px;   /* ★ 1.2 倍宽 */
+    display: flex; flex-direction: column; gap: 10px;
+    pointer-events: auto; max-height: 82vh; overflow-y: auto; scrollbar-width: none;
+    transition: opacity .5s;
+  }
+  #infoPanel::-webkit-scrollbar { display: none; }
+  #infoPanel.hidden { opacity: 0; pointer-events: none; }
+
+  .info-card {
+    background: rgba(0, 0, 0, 0.72);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 6px; padding: 14px 16px;
+    backdrop-filter: blur(10px);
+    transition: all 0.4s ease, filter 0.45s ease, opacity 0.45s ease;
+    cursor: pointer; position: relative; overflow: hidden;
+  }
+  /* ★ 未展开的卡片：模糊＋压暗，悬停时稍稍清晰 */
+  #infoPanel .info-card:not(.active) { filter: blur(2.5px); opacity: 0.5; }
+  #infoPanel .info-card:not(.active):hover { filter: blur(1px); opacity: 0.8; border-color: rgba(255,255,255,0.25); }
+  .info-card::before {
+    content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 2px;
+    background: transparent; transition: background 0.4s ease;
+  }
+  .info-card.active {
+    border-color: rgba(255, 255, 255, 0.35);
+    background: rgba(0, 0, 0, 0.85);
+    box-shadow: 0 0 30px rgba(255, 255, 255, 0.08);
+  }
+  .info-card.active::before {
+    background: #ffffff; box-shadow: 0 0 12px rgba(255, 255, 255, 0.6);
+  }
+  .info-card:hover { border-color: rgba(255, 255, 255, 0.25); }
+  /* ★ 主次层级：主标题 → 副标题 → 标签 →（展开）描述 → 档案 */
+  .info-card .card-name { font-weight: 700; color: #ffffff; }
+  .info-card .card-name.zh {
+    font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    font-size: 1.15rem; letter-spacing: 0.15em;
+  }
+  .info-card .card-name.en {
+    font-family: 'Doto', 'Courier New', monospace;
+    font-size: 1.02rem; letter-spacing: 0.1em;
+  }
+  .info-card .card-name-sub { margin: 4px 0 10px; color: rgba(255,255,255,0.5); }
+  .info-card .card-name-sub.en {
+    font-family: 'Doto', 'Courier New', monospace; font-weight: 700;
+    font-size: 0.68rem; letter-spacing: 0.22em; text-transform: uppercase;
+  }
+  .info-card .card-name-sub.zh {
+    font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    font-size: 0.78rem; letter-spacing: 0.12em;
+  }
+  .info-card.active .card-name-sub { color: rgba(255,255,255,0.72); }
+  .info-card .card-meta { display: flex; flex-wrap: wrap; gap: 6px; }
+  .info-card .tag {
+    font-family: 'Doto', 'PingFang SC', sans-serif;
+    font-size: 0.6rem; letter-spacing: 0.12em;
+    padding: 2px 8px; border-radius: 3px;
+    background: rgba(255, 255, 255, 0.08);
+    color: rgba(255, 255, 255, 0.65); white-space: nowrap;
+  }
+  .info-card.active .tag {
+    background: rgba(255, 255, 255, 0.15);
+    color: rgba(255, 255, 255, 0.9);
+  }
+  /* ★ 展开区：缩略高度不变，展开后约三倍 */
+  .info-card .card-body { max-height: 0; overflow: hidden; transition: max-height 0.55s ease; }
+  .info-card.active .card-body { max-height: 340px; }
+  .info-card .card-divider { height: 1px; background: rgba(255,255,255,0.12); margin: 12px 0; }
+  .info-card .card-desc {
+    font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    font-size: 0.74rem; line-height: 1.75; letter-spacing: 0.05em;
+    color: rgba(255, 255, 255, 0.78); margin-bottom: 12px;
+    overflow-wrap: break-word; word-break: break-word;
+  }
+  .info-card .card-facts { display: flex; flex-direction: column; gap: 7px; }
+  .info-card .fact-row { display: flex; gap: 12px; font-size: 0.7rem; line-height: 1.5; }
+  .info-card .fact-k {
+    flex: none; width: 3.4em; color: rgba(255,255,255,0.38);
+    font-family: 'Doto', 'PingFang SC', sans-serif;
+    font-size: 0.66rem; letter-spacing: 0.1em; padding-top: 2px;
+  }
+  .info-card .fact-v { color: rgba(255,255,255,0.88); letter-spacing: 0.04em; }
+
+  #langSwitch {
+    position: fixed; top: 20px; right: 24px; z-index: 50;
+    display: flex;
+    background: rgba(0,0,0,.55);
+    border: 1px solid rgba(255,255,255,.18);
+    border-radius: 3px; overflow: hidden;
+    backdrop-filter: blur(8px);
+  }
+  #langSwitch button {
+    background: transparent; border: none;
+    color: rgba(255,255,255,.5);
+    padding: 6px 14px; cursor: pointer;
+    font-family: 'Doto', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    font-weight: 700; font-size: 10px;
+    letter-spacing: .15em; transition: all .25s;
+    border-right: 1px solid rgba(255,255,255,.1);
+    outline: none;
+  }
+  #langSwitch button:last-child { border-right: none; }
+  #langSwitch button:hover { color: #fff; background: rgba(255,255,255,.08); }
+  #langSwitch button.active { color: #fff; background: rgba(255,255,255,.15); }
+
+  /* ★ 输入模式切换：键盘 / 手势 */
+  #modeSwitch {
+    position: fixed; top: 62px; right: 24px; z-index: 50;
+    display: flex;
+    background: rgba(0,0,0,.55);
+    border: 1px solid rgba(255,255,255,.18);
+    border-radius: 3px; overflow: hidden;
+    backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+  }
+  #modeSwitch button {
+    background: transparent; border: none;
+    color: rgba(255,255,255,.5);
+    padding: 6px 14px; cursor: pointer;
+    font-family: 'Doto', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    font-weight: 700; font-size: 10px;
+    letter-spacing: .15em; transition: all .25s;
+    border-right: 1px solid rgba(255,255,255,.1);
+    outline: none;
+  }
+  #modeSwitch button:last-child { border-right: none; }
+  #modeSwitch button:hover { color: #fff; background: rgba(255,255,255,.08); }
+  #modeSwitch button.active { color: #ffd98a; background: rgba(255,255,255,.15); }
+
+  /* ★ 声音开关 */
+  #soundSwitch {
+    position: fixed; top: 104px; right: 24px; z-index: 50;
+    display: flex;
+    background: rgba(0,0,0,.55);
+    border: 1px solid rgba(255,255,255,.18);
+    border-radius: 3px; overflow: hidden;
+    backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+  }
+  #soundSwitch button {
+    background: transparent; border: none;
+    color: rgba(255,255,255,.85);
+    padding: 6px 14px; cursor: pointer;
+    font-family: 'Doto', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    font-weight: 700; font-size: 10px;
+    letter-spacing: .15em; transition: all .25s;
+    outline: none;
+  }
+  #soundSwitch button:hover { color: #fff; background: rgba(255,255,255,.08); }
+  #soundSwitch button.muted { color: rgba(255,255,255,.35); }
+
+  /* ★ 手势摄像头预览 */
+  #camPreview {
+    position: fixed; right: 24px; bottom: 24px; z-index: 60;
+    width: 168px; display: none;
+    background: rgba(0,0,0,.6);
+    border: 1px solid rgba(255,217,138,.35); border-radius: 4px;
+    overflow: hidden; backdrop-filter: blur(6px);
+  }
+  #camPreview.show { display: block; }
+  #camPreview .cam-box { position: relative; width: 168px; height: 126px; }
+  #camPreview video, #camPreview canvas {
+    position: absolute; top: 0; left: 0;
+    width: 168px; height: 126px; transform: scaleX(-1);
+  }
+  #camStatus {
+    display: flex; align-items: center; justify-content: center;
+    height: 126px; width: 100%;
+    font-family: 'Doto', 'PingFang SC', sans-serif; font-size: 10px;
+    letter-spacing: .2em; color: #ffd98a;
+  }
+
+  
+  #hint {
+    position: fixed; left: 50%; bottom: 40px;
+    transform: translateX(-50%);
+    text-align: center; z-index: 8; pointer-events: none;
+  }
+  #hint .en {
+    font-family: 'Doto', 'Courier New', monospace; font-weight: 700;
+    font-size: clamp(.9rem, 1.15vw, 1.05rem);
+    letter-spacing: .22em; color: #ffffff; line-height: 1.6;
+    text-transform: uppercase;
+    text-shadow: 0 0 20px rgba(255,255,255,.35);
+  }
+  #hint .zh {
+    font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    font-size: clamp(.9rem, 1.05vw, 1rem);
+    letter-spacing: .45em; color: #ffffff; opacity: .9;
+    line-height: 1.8;
+    text-shadow: 0 0 20px rgba(255,255,255,.35);
+  }
+
+  #wipeProgress {
+    position: fixed; left: 50%; bottom: 100px;
+    transform: translateX(-50%);
+    width: 320px; height: 2px;
+    background: rgba(255,255,255,.08);
+    border-radius: 1px; overflow: hidden;
+    z-index: 8; opacity: 0; transition: opacity .4s;
+  }
+  #wipeProgress.show { opacity: 1; }
+  #wipeProgress .fill {
+    height: 100%; width: 0%;
+    background: linear-gradient(90deg, rgba(255,255,255,.4), #ffffff);
+    box-shadow: 0 0 12px rgba(255,255,255,.6);
+    transition: width .15s linear;
+  }
+
+  #holdRing {
+    position: fixed; top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 180px; height: 180px;
+    pointer-events: none; z-index: 15;
+    opacity: 0; transition: opacity .18s;
+  }
+  #holdRing.show { opacity: 1; }
+  #holdRing svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+  #holdRing .bg { fill: none; stroke: rgba(255,255,255,.12); stroke-width: 2.5; }
+  #holdRing .progress {
+    fill: none; stroke: #ffffff; stroke-width: 2.5;
+    stroke-linecap: round;
+    filter: drop-shadow(0 0 6px rgba(255,255,255,.8));
+  }
+  #holdRing .label {
+    position: absolute; top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    display: flex; flex-direction: column;
+    align-items: center; gap: 4px;
+  }
+  #holdRing .label .en {
+    font-family: 'Doto', 'Courier New', monospace; font-weight: 700;
+    font-size: .82rem; letter-spacing: .2em; color: #ffffff;
+  }
+  #holdRing .label .zh {
+    font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    font-size: .75rem; letter-spacing: .35em;
+    color: #ffffff; opacity: .9;
+  }
+
+  #debug {
+    position: fixed; bottom: 10px; left: 50%; transform: translateX(-50%);
+    z-index: 0; background: rgba(0,0,0,.45); opacity: .3;   /* ★ 30% 不透明度，且在模型图层之下 */
+    color: rgba(0,255,150,.7);
+    font-family: 'Doto', 'Courier New', monospace;
+    font-weight: 400; font-size: 11px;
+    letter-spacing: .08em; padding: 6px 14px; text-align: center;
+    border-radius: 3px; max-width: 92vw;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;   /* ★ 字幕式：只显示最新一条 */
+  }
+  #debug:empty { display: none; }
+
+  #loader {
+    position: fixed; top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 35; text-align: center;
+    min-width: 420px;
+    background: rgba(0,0,0,.85);
+    padding: 30px 40px; border-radius: 8px;
+  }
+  #loader.hide { display: none; }
+  #loader h2 { display: flex; flex-direction: column; align-items: center; gap: 6px; margin-bottom: 26px; }
+  #loader h2 .en {
+    font-family: 'Doto', 'Courier New', monospace; font-weight: 700;
+    font-size: 1.3rem; color: #ffffff; letter-spacing: .35em;
+  }
+  #loader h2 .zh {
+    font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    font-size: 1rem; color: #ffffff; letter-spacing: .5em; opacity: .85;
+  }
+
+  .row { display: flex; align-items: center; font-size: .85rem; letter-spacing: .1em; margin: 10px 0; }
+  .row .name { width: 150px; text-align: left; color: rgba(255,255,255,.85);
+    display: flex; flex-direction: column; gap: 1px; }
+  .row .name .en { font-family: 'Doto', 'Courier New', monospace;
+    font-weight: 700; font-size: .72rem; letter-spacing: .12em; }
+  .row .name .zh { font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    font-size: .78rem; letter-spacing: .2em; opacity: .75; }
+  .row .bar { flex: 1; height: 2px; background: rgba(255,255,255,.1); overflow: hidden; margin: 0 12px; }
+  .row .fill { height: 100%; width: 0%; background: #ffffff; transition: width .15s linear; }
+  .row .stat { width: 120px; text-align: right; color: rgba(255,255,255,.5);
+    font-family: 'Doto', 'Courier New', monospace;
+    font-weight: 700; font-size: .72rem; letter-spacing: .12em;
+    display: flex; flex-direction: column; align-items: flex-end; gap: 1px; }
+  .row .stat .en { font-size: .72rem; }
+  .row .stat .zh { font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    font-size: .7rem; opacity: .8; letter-spacing: .2em; }
+  .row.done .fill { background: #7f7; } .row.done .stat { color: #7f7; }
+  .row.err .fill { background: #f66; } .row.err .stat { color: #f66; }
+
+  @media (max-width: 1100px) {
+    #infoPanel { width: 312px; }   /* ★ 1.2 倍宽 */
+    #nameBlock { width: calc(100vw - 320px); max-width: 500px; }
+  }
+  @media (max-width: 800px) {
+    #infoPanel { display: none; }
+    #nameBlock { width: calc(100vw - 80px); max-width: none; }
+  }
+  #dharmaPanel {
+    position: fixed; right: 14px; bottom: 14px; z-index: 50;
+    width: 248px; background: rgba(10, 10, 14, 0.78);
+    border: 1px solid rgba(255, 200, 90, 0.25); border-radius: 10px;
+    backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+    color: #f5e9d0; font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    font-size: 12px; user-select: none;
+  }
+  #dharmaPanel .dp-head {
+    padding: 8px 12px; cursor: pointer; font-weight: 700; letter-spacing: .2em;
+    font-size: 12px; color: #ffd98a; display: flex; justify-content: space-between;
+    border-bottom: 1px solid rgba(255, 200, 90, 0.18);
+  }
+  #dharmaPanel.collapsed .dp-body { display: none; }
+  #dharmaPanel .dp-body { padding: 10px 12px 12px; display: flex; flex-direction: column; gap: 9px; }
+  #dharmaPanel .dp-row { display: flex; align-items: center; gap: 8px; }
+  #dharmaPanel .dp-row label { width: 58px; flex: none; opacity: .85; letter-spacing: .08em; }
+  #dharmaPanel .dp-row input[type="range"] { flex: 1; min-width: 0; accent-color: #e8a83e; }
+  #dharmaPanel .dp-val { width: 44px; flex: none; text-align: right; font-variant-numeric: tabular-nums; color: #ffd98a; }
+  #dharmaPanel .dp-modes { flex: 1; display: flex; flex-wrap: wrap; gap: 4px; }
+  #dharmaPanel .dp-modes button {
+    flex: 1 1 30%; padding: 4px 0; font-size: 11px; border-radius: 6px;
+    background: rgba(255, 255, 255, 0.06); color: #e8dcc0;
+    border: 1px solid rgba(255, 200, 90, 0.2); cursor: pointer; letter-spacing: .1em;
+  }
+  #dharmaPanel .dp-modes button.on {
+    background: rgba(232, 168, 62, 0.28); color: #ffe6b0; border-color: #e8a83e;
+  }
+  #dharmaPanel input[type="color"] {
+    width: 44px; height: 22px; padding: 0; border: 1px solid rgba(255,200,90,.35);
+    border-radius: 4px; background: none; cursor: pointer;
+  }
+  #dharmaPanel .dp-copy {
+    flex: 1; padding: 6px 0; border-radius: 6px; cursor: pointer;
+    background: rgba(232, 168, 62, 0.2); color: #ffe6b0; letter-spacing: .2em;
+    border: 1px solid rgba(232, 168, 62, 0.5); font-size: 12px;
+  }
+  #dharmaPanel .dp-copy:active { background: rgba(232, 168, 62, 0.4); }
+  #dharmaPanel .dp-msg { font-size: 11px; color: #9fe6a0; min-width: 48px; text-align: right; }
+  #dharmaPanel .dp-hint { font-size: 10px; opacity: .55; letter-spacing: .06em; margin-top: -4px; }
+  #dharmaPanel .dp-sec { font-size: 11px; letter-spacing: .18em; color: #ffd98a; opacity: .85; margin-top: 2px; }
+
+
+
