@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en" data-lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Stone Reveal</title>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Doto:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+<div id="bg-layer">
+  <div id="nameBlock">
+    <!-- ★ 右上叙事句移至模型名上方，常驻 -->
+    <div id="touchHint">
+      <div class="en">Touch gently — the Buddha waits to be lit.</div>
+      <div class="zh">轻触，佛身犹在，静待点亮。</div>
+    </div>
+    <div id="buddhaName">
+      <div class="en">BEIDA<br>BUDDHA</div>
+      <div class="zh">北大像</div>
+    </div>
+    <div id="narrative">
+      <div class="en"></div>
+      <div class="zh"></div>
+    </div>
+    <!-- ★ 阶段三左侧：唯一的句子（虔诚赐福） -->
+    <div id="blessLine">
+      <div class="en">With a devout heart, receive the Buddha's blessing.</div>
+      <div class="zh">虔心祈愿，佛赐福泽。</div>
+    </div>
+  </div>
+</div>
+
+<!-- ★ 阶段一模型微调：左下角固定 -->
+<div id="modelTweaks">
+  <div class="mt-row">
+    <span class="mt-label"><span class="en">SIZE</span><span class="zh">模型大小</span></span>
+    <input type="range" id="tweakSize" min="0.50" max="1.50" step="0.01" value="1.00">
+    <span class="mt-val" id="tweakSizeVal">1.00</span>
+  </div>
+  <div class="mt-row">
+    <span class="mt-label"><span class="en">HEIGHT</span><span class="zh">上下距离</span></span>
+    <input type="range" id="tweakY" min="-1.50" max="1.50" step="0.01" value="0.00">
+    <span class="mt-val" id="tweakYVal">0.00</span>
+  </div>
+</div>
+
+<div id="app"></div>
+<div id="infoPanel"></div>
+
+<div id="langSwitch">
+  <button data-lang="en" class="active">EN</button>
+  <button data-lang="zh">中文</button>
+</div>
+
+<div id="modeSwitch">
+  <button data-mode="keyboard" class="active"><span class="en">⌨ KEYBOARD</span><span class="zh">⌨ 键盘</span></button>
+  <button data-mode="gesture"><span class="en">✋ GESTURE</span><span class="zh">✋ 手势</span></button>
+</div>
+
+<div id="soundSwitch">
+  <button id="soundToggle"><span class="en">🔊 SOUND</span><span class="zh">🔊 声音</span></button>
+</div>
+
+<div id="camPreview">
+  <div class="cam-box">
+    <video id="camVideo" playsinline muted></video>
+    <canvas id="camCanvas" width="336" height="252"></canvas>
+  </div>
+  <div id="camStatus"><span class="en">STARTING CAMERA…</span><span class="zh">正在启动摄像头…</span></div>
+</div>
+
+</div>
+
+<div id="hint">
+  <div class="en">SPACE TO SWITCH · HOLD TO SELECT</div>
+  <div class="zh">空格切换 · 长按选中</div>
+</div>
+
+<div id="wipeProgress"><div class="fill"></div></div>
+
+<!-- ★ 祝福卡片：半透明＋背景模糊，约半屏，随机祝福 -->
+<div id="blessCard">
+  <div class="bless-kicker">
+    <div class="en">✦ BLESSING ✦</div>
+    <div class="zh">✦ 祝福 ✦</div>
+  </div>
+  <div class="bless-text">
+    <div class="en"></div>
+    <div class="zh"></div>
+  </div>
+  <div class="bless-divider"><span>✦</span></div>
+  <div class="bless-note">
+    <div class="en"></div>
+    <div class="zh"></div>
+  </div>
+  <div class="bless-tip">
+    <div class="en">PRESS SPACE TO CONTINUE</div>
+    <div class="zh">按下空格继续</div>
+  </div>
+</div>
+
+<div id="holdRing">
+  <svg viewBox="0 0 100 100">
+    <circle class="bg" cx="50" cy="50" r="44"/>
+    <circle class="progress" cx="50" cy="50" r="44" stroke-dasharray="276.46" stroke-dashoffset="276.46"/>
+  </svg>
+  <div class="label">
+    <div class="en">HOLD</div>
+    <div class="zh">长按</div>
+  </div>
+</div>
+
+<div id="loader">
+  <h2>
+    <div class="en">LOADING MODELS</div>
+    <div class="zh">正在加载模型</div>
+  </h2>
+  <div id="rows"></div>
+</div>
+
+<div id="debug"></div>
+
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+  }
+}
+</script>
+
+<script type="module" src="src/main.js"></script>
+</body>
+</html>
