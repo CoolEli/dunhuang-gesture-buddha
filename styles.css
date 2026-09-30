@@ -33,20 +33,20 @@
   }
   #narrative { margin-top: 26px; max-width: min(460px, 72vw); }   /* ★ 至多四五行，不碰模型 */
   /* ★ 阶段三左侧：只显示赐福句，其余全部隐藏 */
-  #blessLine { display: none; }
+  #blessLine { display: none; text-align: left; margin-left: 0; }   /* ★ 尽量靠左 */
   body.phase3 #touchHint,
   body.phase3 #buddhaName,
   body.phase3 #narrative { display: none !important; }
   body.phase3 #blessLine { display: block; }
   #blessLine .en {
     font-family: 'Doto', 'Courier New', monospace; font-weight: 700;
-    font-size: clamp(3rem, 7.5vw, 8rem);   /* ★ 与模型名字号一致 */
+    font-size: clamp(2.1rem, 5.25vw, 5.6rem);   /* ★ 模型名字号的 70% */
     line-height: 1.4; letter-spacing: .06em; color: #fff;
     overflow-wrap: break-word; word-break: break-word;
   }
   #blessLine .zh {
     font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif; font-weight: 900;
-    font-size: clamp(3rem, 7vw, 8rem);   /* ★ 与模型名字号一致 */
+    font-size: clamp(2.1rem, 4.9vw, 5.6rem);   /* ★ 模型名字号的 70% */
     line-height: 1.55; letter-spacing: .2em; color: #fff;
     overflow-wrap: break-word; word-break: break-word;
   }
